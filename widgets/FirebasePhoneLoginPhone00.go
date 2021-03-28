@@ -8,7 +8,7 @@ import (
 )
 
 type FirebasePhoneLoginPhone00Options struct {
-	etc *elementtreeconstructor.ElementTreeConstructor
+	Etc *elementtreeconstructor.ElementTreeConstructor
 
 	LoadFirebaseAuthonomously bool
 	GetAuthCB                 func() (*gojsfirebase.Auth, error)
@@ -45,7 +45,7 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 		options: options,
 	}
 
-	etc := self.options.etc
+	etc := self.options.Etc
 
 	self.Element = etc.CreateElement("table")
 
