@@ -1,4 +1,4 @@
-package FirebasePhoneLoginPhone00
+package widgets
 
 import (
 	// "syscall/js"
