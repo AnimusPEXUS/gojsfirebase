@@ -1,6 +1,7 @@
 package gojsfirebase
 
 import (
+	"errors"
 	"syscall/js"
 
 	"github.com/AnimusPEXUS/gojstools/elementtreeconstructor"
