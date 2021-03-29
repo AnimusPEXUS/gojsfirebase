@@ -15,7 +15,7 @@ func (self *Auth) SignInWithPhoneNumber(
 	phonnenumber string,
 	app_vfy ApplicationVerifierI,
 ) (*promise.Promise, error) {
-	promise_js := self.auth.Call("signInWithPhoneNumber", *app_vfy.GetJSValue())
+	promise_js := self.auth.Call("signInWithPhoneNumber", phonnenumber, *app_vfy.GetJSValue())
 	promise, err := promise.NewPromiseFromJSValue(&promise_js)
 	if err != nil {
 		return nil, err
