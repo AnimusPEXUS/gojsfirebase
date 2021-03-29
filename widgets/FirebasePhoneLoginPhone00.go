@@ -6,7 +6,8 @@ import (
 	"log"
 	"syscall/js"
 
-	"github.com/AnimusPEXUS/gojsfirebase"
+	firebaseapp "github.com/AnimusPEXUS/gojsfirebase/app"
+	firebaseauth "github.com/AnimusPEXUS/gojsfirebase/auth"
 	"github.com/AnimusPEXUS/gojstools/elementtreeconstructor"
 	gojstoolsutils "github.com/AnimusPEXUS/gojstools/utils"
 )
@@ -15,7 +16,7 @@ type FirebasePhoneLoginPhone00Options struct {
 	Etc *elementtreeconstructor.ElementTreeConstructor
 
 	LoadFirebaseAuthonomously bool
-	GetFirebaseAppCB          func() (*gojsfirebase.App, error)
+	GetFirebaseAppCB          func() (*firebaseapp.App, error)
 }
 
 type FirebasePhoneLoginPhone00 struct {
@@ -67,7 +68,8 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 		etc.CreateElement("tr").
 			AppendChildren(
 				etc.CreateElement("td").
-					SetAttribute("id", "phone-input-captcha-placement"),
+					SetAttribute("id", "phone-input-captcha-placement").
+					SetAttribute("colspan", "3"),
 			),
 		etc.CreateElement("tr").
 			AppendChildren(
@@ -112,17 +114,18 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 		panic(err)
 	}
 
-	auth, err := app.Auth()
+	auth, err := firebaseauth.NewAuthFromApp(app)
 	if err != nil {
 		panic(err)
 	}
 
 	rvo := map[string]interface{}{}
 
-	vfy, err := auth.RecaptchaVerifier(
+	vfy, err := firebaseauth.NewRecaptchaVerifier(
 		"phone-input-captcha-placement",
 		rvo,
 		app,
+		auth,
 	)
 	if err != nil {
 		panic(err)
@@ -138,6 +141,9 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 	promise.Then(
 		gojstoolsutils.JSFuncLiteralToPointer(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			log.Println("firebase phone auth start success")
+			if len(args) != 0 {
+
+			}
 			return false
 		})),
 		gojstoolsutils.JSFuncLiteralToPointer(js.FuncOf(func(this js.Value, args []js.Value) interface{} {

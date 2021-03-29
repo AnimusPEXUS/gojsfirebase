@@ -58,15 +58,3 @@ func NewFirebaseFromGlobalObjectP1(jsvalue *js.Value) (*Firebase, error) {
 	self := &Firebase{JSValue: jsvalue}
 	return self, nil
 }
-
-func (self *Firebase) NewApp(cfg map[string]interface{}) (*App, error) {
-	// TODO: exception handling
-	app := self.JSValue.Call("initializeApp", js.ValueOf(cfg))
-
-	ret := &App{
-		parent: self,
-		app:    app,
-		cfg:    cfg,
-	}
-	return ret, nil
-}

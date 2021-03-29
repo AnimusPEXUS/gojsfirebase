@@ -1,4 +1,4 @@
-package gojsfirebase
+package auth
 
 import "syscall/js"
 
