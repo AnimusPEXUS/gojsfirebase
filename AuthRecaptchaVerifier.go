@@ -11,7 +11,7 @@ type AuthRecaptchaVerifier struct {
 
 func (self *Auth) RecaptchaVerifier(
 	container string,
-	parameters *map[string]interface{},
+	parameters map[string]interface{},
 	app *App,
 ) (*AuthRecaptchaVerifier, error) {
 	RecaptchaVerifier := self.parent.parent.JSValue.Get("auth").Get("RecaptchaVerifier")
@@ -20,7 +20,7 @@ func (self *Auth) RecaptchaVerifier(
 		return nil, errors.New("RecaptchaVerifier undefined")
 	}
 
-	rv := RecaptchaVerifier.New(container, parameters, app.app)
+	rv := RecaptchaVerifier.New(container, js.ValueOf(parameters), app.app)
 
 	ret := &AuthRecaptchaVerifier{
 		JSValue: &rv,

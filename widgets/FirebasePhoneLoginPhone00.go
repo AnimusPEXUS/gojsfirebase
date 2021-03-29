@@ -121,7 +121,7 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 
 	vfy, err := auth.RecaptchaVerifier(
 		"phone-input-captcha-placement",
-		&rvo,
+		rvo,
 		app,
 	)
 	if err != nil {
