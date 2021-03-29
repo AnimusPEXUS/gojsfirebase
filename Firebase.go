@@ -31,15 +31,15 @@ func LoadParts(doc *dom.Document, version string, parts ...string) error {
 }
 
 type Firebase struct {
-	JSValue js.Value
+	JSValue *js.Value
 }
 
 func NewFirebaseFromGlobalObjectP0() (*Firebase, error) {
 	jsvalue := js.Global().Get("firebase")
-	return NewFirebaseFromGlobalObjectP1(jsvalue)
+	return NewFirebaseFromGlobalObjectP1(&jsvalue)
 }
 
-func NewFirebaseFromGlobalObjectP1(jsvalue js.Value) (*Firebase, error) {
+func NewFirebaseFromGlobalObjectP1(jsvalue *js.Value) (*Firebase, error) {
 	self := &Firebase{JSValue: jsvalue}
 	return self, nil
 }
