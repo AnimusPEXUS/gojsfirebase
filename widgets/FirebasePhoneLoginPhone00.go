@@ -115,7 +115,7 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 		panic(err)
 	}
 
-	auth, err := firebaseauth.NewAuthFromApp(app)
+	auth, err := self.options.GetFirebaseAuthCB()
 	if err != nil {
 		panic(err)
 	}
