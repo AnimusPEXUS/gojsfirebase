@@ -17,6 +17,7 @@ type FirebasePhoneLoginPhone00Options struct {
 
 	LoadFirebaseAuthonomously bool
 	GetFirebaseAppCB          func() (*firebaseapp.App, error)
+	GetFirebaseAuthCB         func() (*firebaseauth.Auth, error)
 }
 
 type FirebasePhoneLoginPhone00 struct {
