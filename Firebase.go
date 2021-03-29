@@ -36,6 +36,9 @@ type Firebase struct {
 
 func NewFirebaseFromGlobalObjectP0() (*Firebase, error) {
 	jsvalue := js.Global().Get("firebase")
+	if jsvalue.IsUndefined() {
+		return nil, errors.New("firebase variable is undefined")
+	}
 	return NewFirebaseFromGlobalObjectP1(&jsvalue)
 }
 
