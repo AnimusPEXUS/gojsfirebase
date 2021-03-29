@@ -14,7 +14,8 @@ func (self *Auth) RecaptchaVerifier(
 	parameters *map[string]interface{},
 	app *App,
 ) (*AuthRecaptchaVerifier, error) {
-	RecaptchaVerifier := self.auth.Get("RecaptchaVerifier")
+	RecaptchaVerifier := self.parent.parent.JSValue.Get("auth").Get("RecaptchaVerifier")
+	// RecaptchaVerifier := self.auth.Get("RecaptchaVerifier")
 	if RecaptchaVerifier.IsNull() || RecaptchaVerifier.IsUndefined() {
 		return nil, errors.New("RecaptchaVerifier undefined")
 	}
