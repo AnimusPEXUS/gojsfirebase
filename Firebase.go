@@ -32,7 +32,6 @@ func LoadParts(doc *dom.Document, version string, parts ...string) error {
 
 type Firebase struct {
 	JSValue js.Value
-	Version string
 }
 
 func NewFirebaseFromGlobalObjectP0() (*Firebase, error) {
@@ -42,12 +41,6 @@ func NewFirebaseFromGlobalObjectP0() (*Firebase, error) {
 
 func NewFirebaseFromGlobalObjectP1(jsvalue js.Value) (*Firebase, error) {
 	self := &Firebase{JSValue: jsvalue}
-	return self, nil
-}
-
-func NewFirebase(version string) (*Firebase, error) {
-	self := &Firebase{}
-	self.Version = version
 	return self, nil
 }
 
