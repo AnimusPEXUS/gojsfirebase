@@ -10,6 +10,26 @@ import (
 // type FirebaseConfig struct {
 // }
 
+func loadPart(doc *dom.Document, version string, name string) error {
+	etc := elementtreeconstructor.NewElementTreeConstructor(doc)
+	body := doc.GetBody()
+	js0 := etc.CreateElement("script")
+	js0.SetAttribute("src", "https://www.gstatic.com/firebasejs/"+version+"/firebase-"+name+".js")
+	body_mutator := elementtreeconstructor.NewElementMutatorFromElement(body)
+	body_mutator.AppendChildren(js0)
+	return nil
+}
+
+func LoadParts(doc *dom.Document, version string, parts ...string) error {
+	for _, i := range parts {
+		err := loadPart(doc, version, i)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 type Firebase struct {
 	JSValue js.Value
 	Version string
@@ -29,28 +49,6 @@ func NewFirebase(version string) (*Firebase, error) {
 	self := &Firebase{}
 	self.Version = version
 	return self, nil
-}
-
-func (self *Firebase) InitWithConfig() error {
-	return nil
-}
-
-func (self *Firebase) loadPart(doc *dom.Document, name string) error {
-	etc := elementtreeconstructor.NewElementTreeConstructor(doc)
-	body := doc.GetBody()
-	js0 := etc.CreateElement("script")
-	js0.SetAttribute("src", "https://www.gstatic.com/firebasejs/"+self.Version+"/firebase-"+name+".js")
-	body_mutator := elementtreeconstructor.NewElementMutatorFromElement(body)
-	body_mutator.AppendChildren(js0)
-	return nil
-}
-
-func (self *Firebase) LoadCore(doc *dom.Document) error {
-	return self.loadPart(doc, "app")
-}
-
-func (self *Firebase) LoadAuth(doc *dom.Document) error {
-	return self.loadPart(doc, "auth")
 }
 
 func (self *Firebase) NewApp(cfg map[string]interface{}) (*App, error) {
