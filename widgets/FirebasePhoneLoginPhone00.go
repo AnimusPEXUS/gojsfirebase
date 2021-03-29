@@ -67,7 +67,7 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 		etc.CreateElement("tr").
 			AppendChildren(
 				etc.CreateElement("td").
-					SetAttribute("id", "phone-input-capcha-placement"),
+					SetAttribute("id", "phone-input-captcha-placement"),
 			),
 		etc.CreateElement("tr").
 			AppendChildren(
@@ -117,9 +117,11 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 		panic(err)
 	}
 
+	rvo := map[string]interface{}{}
+
 	vfy, err := auth.RecaptchaVerifier(
-		"phone-input-capcha-placement",
-		&map[string]interface{}{},
+		"phone-input-captcha-placement",
+		&rvo,
 		app,
 	)
 	if err != nil {

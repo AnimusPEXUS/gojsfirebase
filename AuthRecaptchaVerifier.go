@@ -20,7 +20,7 @@ func (self *Auth) RecaptchaVerifier(
 		return nil, errors.New("RecaptchaVerifier undefined")
 	}
 
-	rv := RecaptchaVerifier.New(container, parameters, app)
+	rv := RecaptchaVerifier.New(container, parameters, app.app)
 
 	ret := &AuthRecaptchaVerifier{
 		JSValue: &rv,
