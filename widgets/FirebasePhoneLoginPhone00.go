@@ -112,7 +112,12 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 		panic(err)
 	}
 
-	vfy, err := gojsfirebase.NewAuthRecaptchaVerifier(
+	auth, err := app.Auth()
+	if err != nil {
+		panic(err)
+	}
+
+	vfy, err := auth.RecaptchaVerifier(
 		"phone-input-capcha-placement",
 		&map[string]interface{}{},
 		app,
@@ -123,11 +128,6 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 
 	phone := self.phone_input.SelfJsValue().Get("value").String()
 	log.Println("Phone is:", phone)
-
-	auth, err := app.Auth()
-	if err != nil {
-		panic(err)
-	}
 
 	promise, err := auth.SignInWithPhoneNumber(phone, vfy)
 	if err != nil {

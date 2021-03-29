@@ -9,24 +9,23 @@ type AuthRecaptchaVerifier struct {
 	JSValue *js.Value
 }
 
-func NewAuthRecaptchaVerifier(
+func (self *Auth) RecaptchaVerifier(
 	container string,
 	parameters *map[string]interface{},
 	app *App,
 ) (*AuthRecaptchaVerifier, error) {
-
-	RecaptchaVerifier := js.Global().Get("RecaptchaVerifier")
+	RecaptchaVerifier := self.auth.Get("RecaptchaVerifier")
 	if RecaptchaVerifier.IsNull() || RecaptchaVerifier.IsUndefined() {
-		return nil, errors.New("couldn't instantinate Firebase Auth RecaptchaVerifier")
+		return nil, errors.New("RecaptchaVerifier undefined")
 	}
 
 	rv := RecaptchaVerifier.New(container, parameters, app)
 
-	self := &AuthRecaptchaVerifier{
+	ret := &AuthRecaptchaVerifier{
 		JSValue: &rv,
 	}
 
-	return self, nil
+	return ret, nil
 }
 
 func (self *AuthRecaptchaVerifier) GetJSValue() *js.Value {
