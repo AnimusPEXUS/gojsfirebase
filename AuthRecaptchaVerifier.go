@@ -28,3 +28,7 @@ func NewAuthRecaptchaVerifier(
 
 	return self, nil
 }
+
+func (self *AuthRecaptchaVerifier) GetJSValue() *js.Value {
+	return self.JSValue
+}
