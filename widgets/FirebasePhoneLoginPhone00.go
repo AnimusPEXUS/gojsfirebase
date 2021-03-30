@@ -15,15 +15,11 @@ import (
 type FirebasePhoneLoginPhone00Options struct {
 	Etc *elementtreeconstructor.ElementTreeConstructor
 
-	LoadFirebaseAuthonomously bool
-	GetFirebaseAppCB          func() (*firebaseapp.App, error)
-	GetFirebaseAuthCB         func() (*firebaseauth.Auth, error)
-
-	// OnStartSuccess                       func(res *firebaseauth.ConfirmationResult)
-	// OnStartFailure                       func()
-	// SupplyConfiramationResultForEndStart func(cr *firebaseauth.ConfirmationResult)
-	OnEndSuccess func(res *firebaseauth.UserCredential)
-	OnEndFailure func()
+	// LoadFirebaseCB    func() error
+	GetFirebaseAppCB  func() (*firebaseapp.App, error)
+	GetFirebaseAuthCB func() (*firebaseauth.Auth, error)
+	OnEndSuccess      func(res *firebaseauth.UserCredential)
+	OnEndFailure      func()
 }
 
 type FirebasePhoneLoginPhone00 struct {
