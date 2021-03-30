@@ -99,15 +99,21 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 			),
 	)
 
-	self.phone_button.Set("onclick", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		go self.onphoneclick()
-		return false
-	}))
+	self.phone_button.Set(
+		"onclick",
+		js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			go self.onphoneclick()
+			return false
+		}),
+	)
 
-	self.code_button.Set("onclick", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		go self.oncodeclick()
-		return false
-	}))
+	self.code_button.Set(
+		"onclick",
+		js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			go self.oncodeclick()
+			return false
+		}),
+	)
 
 	return self, nil
 }
@@ -144,20 +150,24 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 		panic(err)
 	}
 	promise.Then(
-		gojstoolsutils.JSFuncLiteralToPointer(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			log.Println("firebase phone auth start success")
-			if len(args) != 0 {
-				cr := firebaseauth.NewConfirmationResultFromJSValue(
-					gojstoolsutils.JSValueLiteralToPointer(args[0]),
-				)
-				self.cr = cr
-			}
-			return false
-		})),
-		gojstoolsutils.JSFuncLiteralToPointer(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			log.Println("firebase phone auth start failure")
-			return false
-		})),
+		gojstoolsutils.JSFuncLiteralToPointer(
+			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+				log.Println("firebase phone auth start success")
+				if len(args) != 0 {
+					cr := firebaseauth.NewConfirmationResultFromJSValue(
+						gojstoolsutils.JSValueLiteralToPointer(args[0]),
+					)
+					self.cr = cr
+				}
+				return false
+			}),
+		),
+		gojstoolsutils.JSFuncLiteralToPointer(
+			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+				log.Println("firebase phone auth start failure")
+				return false
+			}),
+		),
 	)
 }
 
@@ -174,20 +184,31 @@ func (self *FirebasePhoneLoginPhone00) oncodeclick() {
 	promise := self.cr.Confirm(code)
 
 	promise.Then(
-		gojstoolsutils.JSFuncLiteralToPointer(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			log.Println("firebase phone auth end success")
-			if len(args) != 0 {
-				ucr := firebaseauth.NewUserCredentialFromJSValue(
-					gojstoolsutils.JSValueLiteralToPointer(args[0]),
-				)
-				go self.options.OnEndSuccess(ucr)
-			}
-			return false
-		})),
-		gojstoolsutils.JSFuncLiteralToPointer(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			log.Println("firebase phone auth end failure")
-			return false
-		})),
+		gojstoolsutils.JSFuncLiteralToPointer(
+			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+				log.Println("firebase phone auth end success")
+				if len(args) != 0 {
+					if self.options.OnEndSuccess != nil {
+						ucr := firebaseauth.NewUserCredentialFromJSValue(
+							gojstoolsutils.JSValueLiteralToPointer(args[0]),
+						)
+						go self.options.OnEndSuccess(ucr)
+					} else {
+						log.Println("firebase phone auth success handler is not set")
+					}
+				}
+				return false
+			}),
+		),
+		gojstoolsutils.JSFuncLiteralToPointer(
+			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+				log.Println("firebase phone auth end failure")
+				if self.options.OnEndFailure != nil {
+					go self.options.OnEndFailure()
+				}
+				return false
+			}),
+		),
 	)
 
 }
