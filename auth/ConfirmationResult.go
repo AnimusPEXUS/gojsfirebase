@@ -10,6 +10,10 @@ type ConfirmationResult struct {
 	JSValue *js.Value
 }
 
+func NewConfirmationResultFromJSValue(jsvalue *js.Value) *ConfirmationResult {
+	return &ConfirmationResult{JSValue: jsvalue}
+}
+
 func (self *ConfirmationResult) GetVerificationId() string {
 	return self.JSValue.Get("verificationId").String()
 }
