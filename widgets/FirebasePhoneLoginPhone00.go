@@ -16,8 +16,8 @@ type FirebasePhoneLoginPhone00Options struct {
 	Etc *elementtreeconstructor.ElementTreeConstructor
 
 	// LoadFirebaseCB    func() error
-	GetFirebaseAppCB  func() (*firebaseapp.App, error)
 	GetFirebaseAuthCB func() (*firebaseauth.Auth, error)
+	GetFirebaseAppCB  func() (*firebaseapp.App, error)
 	OnEndSuccess      func(res *firebaseauth.UserCredential)
 	OnEndFailure      func()
 }
@@ -130,7 +130,7 @@ func (self *FirebasePhoneLoginPhone00) onphoneclick() {
 		"phone-input-captcha-placement",
 		rvo,
 		app,
-		auth,
+		// auth,
 	)
 	if err != nil {
 		panic(err)

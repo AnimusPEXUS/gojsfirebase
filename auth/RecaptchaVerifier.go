@@ -15,10 +15,12 @@ func NewRecaptchaVerifier(
 	container string,
 	parameters map[string]interface{},
 	app *firebaseapp.App,
-	auth *Auth,
 ) (*RecaptchaVerifier, error) {
+	// auth *Auth,
 
-	rv_js := auth.JSValue.Get("RecaptchaVerifier")
+	auth := app.Parent.JSValue.Get("auth")
+
+	rv_js := auth.Get("RecaptchaVerifier")
 
 	if rv_js.IsNull() || rv_js.IsUndefined() {
 		return nil, errors.New("RecaptchaVerifier undefined")
