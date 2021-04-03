@@ -3,23 +3,25 @@ package widgets
 import (
 	// "syscall/js"
 
-	"log"
 	"syscall/js"
 
-	firebaseapp "github.com/AnimusPEXUS/gojsfirebase/app"
-	firebaseauth "github.com/AnimusPEXUS/gojsfirebase/auth"
 	"github.com/AnimusPEXUS/gojstools/elementtreeconstructor"
-	gojstoolsutils "github.com/AnimusPEXUS/gojstools/utils"
 )
 
 type FirebasePhoneLoginPhone00Options struct {
 	Etc *elementtreeconstructor.ElementTreeConstructor
 
 	// LoadFirebaseCB    func() error
-	GetFirebaseAuthCB func() (*firebaseauth.Auth, error)
-	GetFirebaseAppCB  func() (*firebaseapp.App, error)
-	OnEndSuccess      func(res *firebaseauth.UserCredential)
-	OnEndFailure      func()
+	// GetFirebaseAuthCB func() (*firebaseauth.Auth, error)
+	// GetFirebaseAppCB  func() (*firebaseapp.App, error)
+
+	// OnStartSuccess func(cr firebaseauth.ConfirmationResult)
+	// OnStartFailure func()
+	// OnEndSuccess   func(res *firebaseauth.UserCredential)
+	// OnEndFailure   func()
+
+	OnPhoneButtonClicked func(number string) error
+	OnCodeButtonClicked  func(code string) error
 }
 
 type FirebasePhoneLoginPhone00 struct {
@@ -27,12 +29,10 @@ type FirebasePhoneLoginPhone00 struct {
 
 	Element *elementtreeconstructor.ElementMutator
 
-	phone_input  *elementtreeconstructor.ElementMutator
-	code_input   *elementtreeconstructor.ElementMutator
+	PhoneInput   *elementtreeconstructor.ElementMutator
+	CodeInput    *elementtreeconstructor.ElementMutator
 	phone_button *elementtreeconstructor.ElementMutator
 	code_button  *elementtreeconstructor.ElementMutator
-
-	cr *firebaseauth.ConfirmationResult
 }
 
 func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
@@ -58,7 +58,7 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 				etc.CreateElement("td").
 					AppendChildren(
 						etc.CreateElement("input").
-							AssignSelf(&self.phone_input).
+							AssignSelf(&self.PhoneInput).
 							SetAttribute("type", "text"),
 					),
 				etc.CreateElement("td").
@@ -85,7 +85,7 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 				etc.CreateElement("td").
 					AppendChildren(
 						etc.CreateElement("input").
-							AssignSelf(&self.code_input).
+							AssignSelf(&self.CodeInput).
 							SetAttribute("type", "text"),
 					),
 				etc.CreateElement("td").
@@ -102,7 +102,7 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 	self.phone_button.Set(
 		"onclick",
 		js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			go self.onphoneclick()
+			go self.options.OnPhoneButtonClicked(self.PhoneInput.GetJsValue("value").String())
 			return false
 		}),
 	)
@@ -110,7 +110,7 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 	self.code_button.Set(
 		"onclick",
 		js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-			go self.oncodeclick()
+			go self.options.OnCodeButtonClicked(self.CodeInput.GetJsValue("value").String())
 			return false
 		}),
 	)
@@ -118,109 +118,14 @@ func NewFirebasePhoneLoginPhone00(options *FirebasePhoneLoginPhone00Options) (
 	return self, nil
 }
 
-func (self *FirebasePhoneLoginPhone00) onphoneclick() {
-	// TODO: error handling
-	app, err := self.options.GetFirebaseAppCB()
-	if err != nil {
-		panic(err)
-	}
-
-	auth, err := self.options.GetFirebaseAuthCB()
-	if err != nil {
-		panic(err)
-	}
-
-	rvo := map[string]interface{}{}
-
-	vfy, err := firebaseauth.NewRecaptchaVerifier(
-		"phone-input-captcha-placement",
-		rvo,
-		app,
-		// auth,
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	phone := self.phone_input.SelfJsValue().Get("value").String()
-	// log.Println("Phone is:", phone)
-
-	promise, err := auth.SignInWithPhoneNumber(phone, vfy)
-	if err != nil {
-		panic(err)
-	}
-	promise.Then(
-		gojstoolsutils.JSFuncLiteralToPointer(
-			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-				log.Println("firebase phone auth start success")
-				if len(args) != 0 {
-					cr := firebaseauth.NewConfirmationResultFromJSValue(
-						gojstoolsutils.JSValueLiteralToPointer(args[0]),
-					)
-					self.cr = cr
-				}
-				return false
-			}),
-		),
-		gojstoolsutils.JSFuncLiteralToPointer(
-			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-				log.Println("firebase phone auth start failure")
-				return false
-			}),
-		),
-	)
-}
-
-func (self *FirebasePhoneLoginPhone00) oncodeclick() {
-	// TODO: error handling
-
-	if self.cr == nil {
-		log.Println("cr is not available")
-		return
-	}
-
-	code := self.code_input.SelfJsValue().Get("value").String()
-
-	promise := self.cr.Confirm(code)
-
-	promise.Then(
-		gojstoolsutils.JSFuncLiteralToPointer(
-			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-				log.Println("firebase phone auth end success")
-				if len(args) != 0 {
-					if self.options.OnEndSuccess != nil {
-						ucr := firebaseauth.NewUserCredentialFromJSValue(
-							gojstoolsutils.JSValueLiteralToPointer(args[0]),
-						)
-						go self.options.OnEndSuccess(ucr)
-					} else {
-						log.Println("firebase phone auth success handler is not set")
-					}
-				}
-				return false
-			}),
-		),
-		gojstoolsutils.JSFuncLiteralToPointer(
-			js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-				log.Println("firebase phone auth end failure")
-				if self.options.OnEndFailure != nil {
-					go self.options.OnEndFailure()
-				}
-				return false
-			}),
-		),
-	)
-
-}
-
 func (self *FirebasePhoneLoginPhone00) Destroy() {
 	self.Element.Parent().Remove(self.Element)
 
 	self.Element = nil
 
-	self.phone_input = nil
-	self.code_input = nil
+	self.PhoneInput = nil
+	self.CodeInput = nil
 	self.phone_button = nil
 	self.code_button = nil
-	self.cr = nil
+
 }
